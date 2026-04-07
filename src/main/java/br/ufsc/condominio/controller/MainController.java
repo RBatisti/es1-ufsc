@@ -1,4 +1,4 @@
 package br.ufsc.condominio.controller;
 
-public class LoginController {
+public class MainController {
 }
