@@ -1,72 +1,100 @@
 package br.ufsc.condominio.controller.ControladorDeEspacosCompartilhados;
 
-import br.ufsc.condominio.controller.MainController;
+import br.ufsc.condominio.model.Armazenamento;
+import br.ufsc.condominio.model.Condomino;
 import br.ufsc.condominio.model.EspacoCompartilhado;
 import br.ufsc.condominio.model.Reserva;
-import br.ufsc.condominio.model.Usuario;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class EspacoCompartilhadoController {
-    private List<EspacoCompartilhado> espacosDisponiveis;
-    private List<Reserva> listaDeReservas;
-    private MainController mainController;
 
-    public EspacoCompartilhadoController(MainController mainController) {
-        this.mainController = mainController;
-        this.espacosDisponiveis = new ArrayList<>();
-        this.listaDeReservas = new ArrayList<>();
-    }
+    private final Armazenamento armazenamento = Armazenamento.getInstancia();
 
-    public void cadastrarEspaco(EspacoCompartilhado espaco) {
-        espacosDisponiveis.add(espaco);
-        System.out.println("Espaço cadastrado: " + espaco.getNome());
+    public void criarEspaco(EspacoCompartilhado espaco) {
+        armazenamento.adicionarEspaco(espaco);
     }
 
     public List<EspacoCompartilhado> listarEspacos() {
-        return espacosDisponiveis;
+        return armazenamento.getEspacos();
     }
 
-
-    public boolean solicitarReserva(EspacoCompartilhado espaco, Usuario morador, Date inicio, Date fim) {
-
-
-//        // Adaptar implementação para utilizar inicio-fim
-//        for (Reserva reservaExistente : listaDeReservas) {
-//            if (reservaExistente.getEspacoCompartilhado().equals(espaco) && reservaExistente.getData().equals(data)) {
-//                System.out.println("Erro: O espaço '" + espaco.getNome() + "' já está reservado nesta data.");
-//                return false;
-//            }
-//        }
-//
-//        Reserva novaReserva = new Reserva(espaco, morador, data);
-//        listaDeReservas.add(novaReserva);
-//        System.out.println("Reserva confirmada para " + morador.getNome() + " no dia " + data);
-//
-       return true;
-
+    public EspacoCompartilhado buscarPorNome(String nome) {
+        for (EspacoCompartilhado e : armazenamento.getEspacos()) {
+            if (e.getNome().equalsIgnoreCase(nome)) {
+                return e;
+            }
+        }
+        return null;
     }
 
-    public List<Reserva> listarReservasPorMorador(Usuario morador) {
-        List<Reserva> reservasDoMorador = new ArrayList<>();
-
-//        for (Reserva r : listaDeReservas) {
-//            if (r.getMorador().equals(morador)) {
-//                reservasDoMorador.add(r);
-//            }
-//        }
-        return reservasDoMorador;
+    // Retorna a reserva ativa agora para um espaço, ou null se livre
+    public Reserva getReservaAtiva(EspacoCompartilhado espaco) {
+        Date agora = new Date();
+        for (Reserva r : armazenamento.getReservas()) {
+            if (r.getEspacoCompartilhado() == espaco) {
+                if (!agora.before(r.getInicio()) && !agora.after(r.getFim())) {
+                    return r;
+                }
+            }
+        }
+        return null;
     }
 
-    public boolean cancelarReserva(Reserva reserva, Usuario morador) {
-//        if (reserva.getMorador().equals(morador)) {
-//            listaDeReservas.remove(reserva);
-//            System.out.println("Reserva cancelada com sucesso.");
-//            return true;
-//        }
-        System.out.println("Erro: Você não tem permissão para cancelar esta reserva.");
+    // Verifica se há conflito de horário para um espaço no intervalo dado
+    public boolean temConflito(EspacoCompartilhado espaco, Date inicio, Date fim) {
+        for (Reserva r : armazenamento.getReservas()) {
+            if (r.getEspacoCompartilhado() == espaco) {
+                if (r.getInicio().before(fim) && inicio.before(r.getFim())) {
+                    return true;
+                }
+            }
+        }
         return false;
+    }
+
+    public boolean agendarReserva(EspacoCompartilhado espaco, Condomino condomino, Date inicio, Date fim) {
+        if (inicio.after(fim) || inicio.equals(fim)) {
+            return false;
+        }
+        if (temConflito(espaco, inicio, fim)) {
+            return false;
+        }
+        armazenamento.adicionarReserva(new Reserva(espaco, inicio, fim, condomino));
+        return true;
+    }
+
+    public List<Reserva> listarReservasDoCondomino(String cpf) {
+        List<Reserva> resultado = new ArrayList<>();
+        for (Reserva r : armazenamento.getReservas()) {
+            if (r.getCondomino().getCPF().equals(cpf)) {
+                resultado.add(r);
+            }
+        }
+        return resultado;
+    }
+
+    public List<Reserva> listarTodasReservas() {
+        return armazenamento.getReservas();
+    }
+
+    public boolean cancelarReservaDoCondomino(int indice, String cpf) {
+        List<Reserva> minhas = listarReservasDoCondomino(cpf);
+        if (indice < 0 || indice >= minhas.size()) {
+            return false;
+        }
+        armazenamento.removerReserva(minhas.get(indice));
+        return true;
+    }
+
+    public boolean cancelarQualquerReserva(int indice) {
+        List<Reserva> todas = armazenamento.getReservas();
+        if (indice < 0 || indice >= todas.size()) {
+            return false;
+        }
+        armazenamento.removerReserva(todas.get(indice));
+        return true;
     }
 }

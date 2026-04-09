@@ -1,15 +1,36 @@
 package br.ufsc.condominio.view.ViewDeUsuários;
 
+import br.ufsc.condominio.controller.ControladorDeUsuários.UsersController;
+import br.ufsc.condominio.model.Condomino;
+import br.ufsc.condominio.model.Genero;
+import br.ufsc.condominio.model.Sindico;
+import br.ufsc.condominio.model.Usuario;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class ViewDeUsuarios {
-    public static void exibirMenu(Scanner scanner) {
+
+    private static final UsersController usersController = new UsersController();
+    private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    public static void exibirMenu(Scanner scanner, Usuario usuarioLogado) {
+        if (!(usuarioLogado instanceof Sindico)) {
+            System.out.println("Acesso negado. Apenas o síndico pode gerenciar usuários.");
+            return;
+        }
+
         int opcao = -1;
         while (opcao != 0) {
             System.out.println("\n--- GERENCIAMENTO DE USUÁRIOS ---");
-            System.out.println("1. Cadastrar novo usuário");
-            System.out.println("2. Editar usuário existente");
-            System.out.println("3. Excluir usuário");
+            System.out.println("1. Cadastrar condômino");
+            System.out.println("2. Editar condômino");
+            System.out.println("3. Excluir condômino");
             System.out.println("4. Listar todos os usuários");
             System.out.println("0. Voltar");
             System.out.print("Escolha: ");
@@ -18,32 +39,129 @@ public class ViewDeUsuarios {
             scanner.nextLine();
 
             switch (opcao) {
-                case 1:
-                    System.out.print("Nome do novo usuário: ");
-                    String nome = scanner.nextLine();
-                    System.out.print("É um Síndico ou Condômino? ");
-                    String perfil = scanner.nextLine();
-                    System.out.println(">> Usuário " + nome + " criado com o perfil: " + perfil);
-                    break;
-                case 2:
-                    System.out.print("Digite o ID ou Nome do usuário que deseja editar: ");
-                    String userEdit = scanner.nextLine();
-                    System.out.println(">> Abrindo modo de edição para: " + userEdit);
-                    break;
-                case 3:
-                    System.out.print("Digite o ID ou Nome do usuário que deseja excluir: ");
-                    String userDel = scanner.nextLine();
-                    System.out.println(">> Usuário " + userDel + " removido do sistema.");
-                    break;
-                case 4:
-                    System.out.println(">> Lista de usuários cadastrados:");
-                    // TODO: Chamar controller para listar todos
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Opção inválida!");
+                case 1: cadastrarCondomino(scanner); break;
+                case 2: editarCondomino(scanner); break;
+                case 3: excluirCondomino(scanner); break;
+                case 4: listarUsuarios(); break;
+                case 0: break;
+                default: System.out.println("Opção inválida!");
             }
+        }
+    }
+
+    private static void cadastrarCondomino(Scanner scanner) {
+        System.out.println("\n-- Cadastrar Condômino --");
+        System.out.print("Nome: ");
+        String nome = scanner.nextLine();
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+        System.out.print("E-mail: ");
+        String email = scanner.nextLine();
+        System.out.print("Senha: ");
+        String senha = scanner.nextLine();
+        System.out.print("Unidade (ex: 101): ");
+        String unidade = scanner.nextLine();
+        System.out.print("Data de nascimento (dd/MM/yyyy): ");
+        String dataStr = scanner.nextLine();
+        System.out.print("Gênero (M/F): ");
+        String generoStr = scanner.nextLine();
+
+        Date dataNascimento = parsarData(dataStr);
+        if (dataNascimento == null) {
+            System.out.println("Data inválida. Condômino não cadastrado.");
+            return;
+        }
+
+        if (usersController.buscarPorCpf(cpf) != null) {
+            System.out.println("Já existe um usuário com esse CPF.");
+            return;
+        }
+
+        Genero genero = generoStr.equalsIgnoreCase("M") ? Genero.MASCULINO : Genero.FEMININO;
+        usersController.cadastrarUsuario(new Condomino(nome, cpf, email, dataNascimento, genero, unidade, senha));
+        System.out.println("Condômino cadastrado com sucesso!");
+    }
+
+    private static void editarCondomino(Scanner scanner) {
+        System.out.println("\n-- Editar Condômino --");
+        System.out.print("CPF do condômino a editar: ");
+        String cpf = scanner.nextLine();
+
+        Usuario usuario = usersController.buscarPorCpf(cpf);
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+        if (usuario instanceof Sindico) {
+            System.out.println("Não é permitido editar o síndico por aqui.");
+            return;
+        }
+
+        Condomino condomino = (Condomino) usuario;
+        System.out.println("Editando: " + condomino.getNome() + " | Deixe em branco para manter o valor atual.");
+
+        System.out.print("Novo nome [" + condomino.getNome() + "]: ");
+        String nome = scanner.nextLine();
+        System.out.print("Novo e-mail [" + condomino.getEmail() + "]: ");
+        String email = scanner.nextLine();
+        System.out.print("Nova senha (deixe em branco para não alterar): ");
+        String senha = scanner.nextLine();
+        System.out.print("Nova unidade [" + condomino.getUnidade() + "]: ");
+        String unidade = scanner.nextLine();
+
+        if (!nome.isBlank()) condomino.setNome(nome);
+        if (!email.isBlank()) condomino.setEmail(email);
+        if (!senha.isBlank()) condomino.setSenha(senha);
+        if (!unidade.isBlank()) condomino.setUnidade(unidade);
+
+        System.out.println("Condômino atualizado com sucesso!");
+    }
+
+    private static void excluirCondomino(Scanner scanner) {
+        System.out.println("\n-- Excluir Condômino --");
+        System.out.print("CPF do condômino a excluir: ");
+        String cpf = scanner.nextLine();
+
+        Usuario usuario = usersController.buscarPorCpf(cpf);
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+        if (usuario instanceof Sindico) {
+            System.out.println("Não é permitido excluir o síndico.");
+            return;
+        }
+
+        System.out.print("Confirma exclusão de " + usuario.getNome() + "? (s/n): ");
+        String confirmacao = scanner.nextLine();
+        if (confirmacao.equalsIgnoreCase("s")) {
+            usersController.removerUsuario(cpf);
+            System.out.println("Condômino removido com sucesso.");
+        } else {
+            System.out.println("Operação cancelada.");
+        }
+    }
+
+    private static void listarUsuarios() {
+        List<Usuario> usuarios = usersController.listarUsuarios();
+        System.out.println("\n-- Lista de Usuários --");
+        if (usuarios.isEmpty()) {
+            System.out.println("Nenhum usuário cadastrado.");
+            return;
+        }
+        for (Usuario u : usuarios) {
+            String tipo = (u instanceof Sindico) ? "Síndico" : "Condômino";
+            String unidade = (u instanceof Condomino) ? " | Unidade: " + ((Condomino) u).getUnidade() : "";
+            System.out.println("[" + tipo + "] " + u.getNome() + " | CPF: " + u.getCPF() + " | E-mail: " + u.getEmail() + unidade);
+        }
+    }
+
+    private static Date parsarData(String dataStr) {
+        try {
+            LocalDate data = LocalDate.parse(dataStr, FORMATO_DATA);
+            return Date.from(data.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        } catch (DateTimeParseException e) {
+            return null;
         }
     }
 }
