@@ -1,4 +1,4 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeUsuarios;
 
 public class Condomino extends Usuario{
     private String unidade;

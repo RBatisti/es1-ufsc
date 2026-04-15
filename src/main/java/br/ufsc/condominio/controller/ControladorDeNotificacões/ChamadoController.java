@@ -1,8 +1,8 @@
 package br.ufsc.condominio.controller.ControladorDeNotificacões;
 
-import br.ufsc.condominio.model.Armazenamento;
-import br.ufsc.condominio.model.Chamado;
-import br.ufsc.condominio.model.StatusChamado;
+import br.ufsc.condominio.utils.Armazenamento;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.StatusChamado;
 
 import java.util.ArrayList;
 import java.util.List;

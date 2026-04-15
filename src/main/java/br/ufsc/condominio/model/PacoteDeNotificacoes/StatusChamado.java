@@ -1,4 +1,4 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeNotificacoes;
 
 public enum StatusChamado {
     NAO_INICIADO,

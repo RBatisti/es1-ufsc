@@ -1,4 +1,6 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados;
+
+import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
 
 import java.util.Date;
 

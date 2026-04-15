@@ -1,4 +1,14 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.utils;
+
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.EspacoCompartilhado;
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.Reserva;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.Aviso;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Genero;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
+import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

@@ -1,4 +1,4 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeNotificacoes;
 
 import java.util.ArrayList;
 import java.util.Date;

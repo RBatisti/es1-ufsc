@@ -1,4 +1,4 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeUsuarios;
 
 import java.util.Date;
 

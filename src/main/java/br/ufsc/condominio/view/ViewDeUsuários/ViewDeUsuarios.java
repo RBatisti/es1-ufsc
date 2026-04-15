@@ -1,10 +1,10 @@
 package br.ufsc.condominio.view.ViewDeUsuários;
 
 import br.ufsc.condominio.controller.ControladorDeUsuários.UsersController;
-import br.ufsc.condominio.model.Condomino;
-import br.ufsc.condominio.model.Genero;
-import br.ufsc.condominio.model.Sindico;
-import br.ufsc.condominio.model.Usuario;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Genero;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

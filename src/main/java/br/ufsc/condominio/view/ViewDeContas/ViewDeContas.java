@@ -1,9 +1,9 @@
 package br.ufsc.condominio.view.ViewDeContas;
 
 import br.ufsc.condominio.controller.ControladorDePrestacãoDeContas.ContasController;
-import br.ufsc.condominio.model.Sindico;
-import br.ufsc.condominio.model.TransacaoFinanceira;
-import br.ufsc.condominio.model.Usuario;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
+import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.util.Date;
 import java.util.List;

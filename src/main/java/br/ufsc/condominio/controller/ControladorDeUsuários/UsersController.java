@@ -1,7 +1,7 @@
 package br.ufsc.condominio.controller.ControladorDeUsuários;
 
-import br.ufsc.condominio.model.Armazenamento;
-import br.ufsc.condominio.model.Usuario;
+import br.ufsc.condominio.utils.Armazenamento;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.util.List;
 

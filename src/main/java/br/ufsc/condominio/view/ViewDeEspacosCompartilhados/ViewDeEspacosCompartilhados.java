@@ -1,11 +1,11 @@
 package br.ufsc.condominio.view.ViewDeEspacosCompartilhados;
 
 import br.ufsc.condominio.controller.ControladorDeEspacosCompartilhados.EspacoCompartilhadoController;
-import br.ufsc.condominio.model.Condomino;
-import br.ufsc.condominio.model.EspacoCompartilhado;
-import br.ufsc.condominio.model.Reserva;
-import br.ufsc.condominio.model.Sindico;
-import br.ufsc.condominio.model.Usuario;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.EspacoCompartilhado;
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.Reserva;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;

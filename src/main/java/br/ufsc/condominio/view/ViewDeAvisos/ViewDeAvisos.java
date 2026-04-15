@@ -1,10 +1,10 @@
 package br.ufsc.condominio.view.ViewDeAvisos;
 
 import br.ufsc.condominio.controller.ControladorDeNotificacões.AvisoController;
-import br.ufsc.condominio.model.Aviso;
-import br.ufsc.condominio.model.CategoriaNotificacao;
-import br.ufsc.condominio.model.Sindico;
-import br.ufsc.condominio.model.Usuario;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.Aviso;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.CategoriaNotificacao;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.util.Date;
 import java.util.List;

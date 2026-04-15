@@ -1,7 +1,7 @@
 package br.ufsc.condominio.controller.ControladorDePrestacãoDeContas;
 
-import br.ufsc.condominio.model.Armazenamento;
-import br.ufsc.condominio.model.TransacaoFinanceira;
+import br.ufsc.condominio.utils.Armazenamento;
+import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
 
 import java.util.List;
 

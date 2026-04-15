@@ -1,9 +1,9 @@
 package br.ufsc.condominio.controller.ControladorDeEspacosCompartilhados;
 
-import br.ufsc.condominio.model.Armazenamento;
-import br.ufsc.condominio.model.Condomino;
-import br.ufsc.condominio.model.EspacoCompartilhado;
-import br.ufsc.condominio.model.Reserva;
+import br.ufsc.condominio.utils.Armazenamento;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.EspacoCompartilhado;
+import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.Reserva;
 
 import java.util.ArrayList;
 import java.util.Date;

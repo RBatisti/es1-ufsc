@@ -1,4 +1,4 @@
-package br.ufsc.condominio.model;
+package br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados;
 
 public class EspacoCompartilhado {
     private String nome;
