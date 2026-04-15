@@ -30,8 +30,8 @@ public class Armazenamento {
         Date nascimento = Date.from(LocalDate.of(1980, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         usuarios = new ArrayList<>();
-        usuarios.add(new Sindico("Nicolas", "012.345.678-12", "nicolas@gmail.com", nascimento, Genero.MASCULINO, "123"));
-        usuarios.add(new Condomino("Ana Lima", "111.222.333-44", "ana@gmail.com", nascimento, Genero.FEMININO, "101", "456"));
+        usuarios.add(new Sindico("Zé", "012.345.678-12", "sindico@gmail.com", nascimento, Genero.MASCULINO, "123"));
+        usuarios.add(new Condomino("Olivia", "111.222.333-44", "condomino@gmail.com", nascimento, Genero.FEMININO, "205", "123"));
 
         avisos = new ArrayList<>();
         chamados = new ArrayList<>();
