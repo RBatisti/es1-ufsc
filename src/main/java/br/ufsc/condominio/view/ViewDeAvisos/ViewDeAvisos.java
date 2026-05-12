@@ -51,13 +51,16 @@ public class ViewDeAvisos {
         System.out.print("Mensagem do aviso: ");
         String mensagem = scanner.nextLine();
         System.out.print("Categoria (IMPORTANTE / NAO_IMPORTANTE): ");
-        String catStr = scanner.nextLine();
+        String catStr = scanner.nextLine().trim().toUpperCase();
 
         CategoriaNotificacao categoria;
-        if (catStr.equalsIgnoreCase("IMPORTANTE")) {
+        if (catStr.equals("IMPORTANTE")) {
             categoria = CategoriaNotificacao.IMPORTANTE;
-        } else {
+        } else if (catStr.equals("NAO_IMPORTANTE")) {
             categoria = CategoriaNotificacao.NAO_IMPORTANTE;
+        } else {
+            System.out.println("Categoria inválida. Use IMPORTANTE ou NAO_IMPORTANTE.");
+            return;
         }
 
         avisoController.enviarAviso(new Aviso(mensagem, new Date(), categoria));
@@ -65,7 +68,9 @@ public class ViewDeAvisos {
     }
 
     private static void verAvisos(Usuario usuarioLogado) {
-        List<Aviso> avisos = avisoController.listar();
+        List<Aviso> avisos = (usuarioLogado instanceof br.ufsc.condominio.model.PacoteDeUsuarios.Condomino)
+                ? avisoController.listarParaCondomino(usuarioLogado.getCPF(), ((br.ufsc.condominio.model.PacoteDeUsuarios.Condomino) usuarioLogado).getDataCadastro())
+                : avisoController.listar(usuarioLogado.getCPF());
         if (avisos.isEmpty()) {
             System.out.println("Nenhum aviso cadastrado.");
             return;

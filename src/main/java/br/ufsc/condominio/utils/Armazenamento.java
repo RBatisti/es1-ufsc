@@ -1,16 +1,22 @@
 package br.ufsc.condominio.utils;
 
+import br.ufsc.condominio.model.PacoteDeAcesso.Acesso;
+import br.ufsc.condominio.model.PacoteDeAcesso.SolicitacaoAcesso;
+import br.ufsc.condominio.model.PacoteDeBoletos.Boleto;
+import br.ufsc.condominio.model.PacoteDeAcesso.Visitante;
 import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.EspacoCompartilhado;
 import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.Reserva;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Aviso;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Genero;
+import br.ufsc.condominio.model.PacoteDeUsuarios.Porteiro;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,19 +31,29 @@ public class Armazenamento {
     private List<EspacoCompartilhado> espacos;
     private List<Reserva> reservas;
     private List<TransacaoFinanceira> transacoes;
+    private List<Visitante> autorizados;
+    private List<Acesso> acessos;
+    private List<SolicitacaoAcesso> solicitacoes;
+    private List<Boleto> boletos;
+    private Usuario currentUser;
 
     private Armazenamento() {
         Date nascimento = Date.from(LocalDate.of(1980, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         usuarios = new ArrayList<>();
-        usuarios.add(new Sindico("Zé", "012.345.678-12", "sindico@gmail.com", nascimento, Genero.MASCULINO, "123"));
-        usuarios.add(new Condomino("Olivia", "111.222.333-44", "condomino@gmail.com", nascimento, Genero.FEMININO, "205", "123"));
+        usuarios.add(new Sindico("Zé", "012.345.678-12", "s", nascimento, Genero.MASCULINO, "123"));
+        usuarios.add(new Condomino("Olivia", "111.222.333-44", "c", nascimento, Genero.FEMININO, "205", "123"));
+        usuarios.add(new Porteiro("João", "999.888.777-66", "p", nascimento, Genero.MASCULINO, "123"));
 
         avisos = new ArrayList<>();
         chamados = new ArrayList<>();
         espacos = new ArrayList<>();
         reservas = new ArrayList<>();
         transacoes = new ArrayList<>();
+        autorizados = new ArrayList<>();
+        acessos = new ArrayList<>();
+        solicitacoes = new ArrayList<>();
+        boletos = new ArrayList<>();
     }
 
     public static Armazenamento getInstancia() {
@@ -74,6 +90,12 @@ public class Armazenamento {
             }
         }
         return null;
+    }
+
+    // --- Utilitário ---
+    public static boolean betweenDates(LocalDateTime horaInicio, LocalDateTime horaFim) {
+        LocalDateTime now = LocalDateTime.now();
+        return !now.isBefore(horaInicio) && !now.isAfter(horaFim);
     }
 
     // --- Avisos ---
@@ -128,5 +150,76 @@ public class Armazenamento {
 
     public void adicionarTransacao(TransacaoFinanceira transacao) {
         transacoes.add(transacao);
+    }
+
+    // --- Autorizados ---
+
+    public List<Visitante> getAutorizados() {
+        return autorizados;
+    }
+
+    public void adicionarAutorizado(Visitante visitante) {
+        autorizados.add(visitante);
+    }
+
+    public boolean removerAutorizado(String cpf, String unidade) {
+        for (Visitante v : autorizados) {
+            if (v.getCpf().equals(cpf) && v.getUnidadeDestino().equals(unidade)) {
+                autorizados.remove(v);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // --- Acessos ---
+
+    public List<Acesso> getAcessos() {
+        return acessos;
+    }
+
+    public void adicionarAcesso(Acesso acesso) {
+        acessos.add(acesso);
+    }
+
+    // --- Solicitacoes de Acesso ---
+
+    public List<SolicitacaoAcesso> getSolicitacoes() {
+        return solicitacoes;
+    }
+
+    public void adicionarSolicitacao(SolicitacaoAcesso s) {
+        solicitacoes.add(s);
+    }
+
+    // --- Utilitário de Usuários ---
+
+    public String buscarCondominoPorUnidade(String unidade) {
+        for (Usuario u : usuarios) {
+            if (u instanceof Condomino && ((Condomino) u).getUnidade().equals(unidade)) {
+                return u.getCPF();
+            }
+        }
+        return null;
+    }
+
+    // --- Boletos ---
+
+    public List<Boleto> getBoletos() {
+        return boletos;
+    }
+
+    public void adicionarBoleto(Boleto boleto) {
+        boletos.add(boleto);
+    }
+
+    // --- Sessão ---
+
+    public Usuario getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(Usuario usuario) {
+        this.currentUser = usuario;
     }
 }
