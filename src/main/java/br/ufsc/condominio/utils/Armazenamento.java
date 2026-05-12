@@ -35,6 +35,7 @@ public class Armazenamento {
     private List<Acesso> acessos;
     private List<SolicitacaoAcesso> solicitacoes;
     private List<Boleto> boletos;
+    private double taxaCondominialPadrao = 500.00;
     private Usuario currentUser;
 
     private Armazenamento() {
@@ -212,6 +213,11 @@ public class Armazenamento {
     public void adicionarBoleto(Boleto boleto) {
         boletos.add(boleto);
     }
+
+    // --- Taxa condominial padrão ---
+
+    public double getTaxaCondominialPadrao() { return taxaCondominialPadrao; }
+    public void setTaxaCondominialPadrao(double taxa) { this.taxaCondominialPadrao = taxa; }
 
     // --- Sessão ---
 

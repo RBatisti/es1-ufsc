@@ -66,14 +66,30 @@ public class BoletoController {
                 "Taxa condominial " + boleto.getMesReferencia() + " - Unidade " + boleto.getUnidade(),
                 true, "TAXA_CONDOMINIAL"));
 
+        String cpfCondomino = cpfDoCondominoPorUnidade(boleto.getUnidade());
+        List<String> destPagamento = new ArrayList<>();
+        if (cpfCondomino != null) destPagamento.add(cpfCondomino);
         avisoController.enviarAviso(new Aviso(
                 "Pagamento recebido: unidade " + boleto.getUnidade() +
                 " quitou R$ " + String.format("%.2f", boleto.getValorTotal()) +
                 " referente a " + boleto.getMesReferencia() +
                 ". Comprovante: " + boleto.getComprovante(),
-                new Date(), CategoriaNotificacao.IMPORTANTE));
+                new Date(), CategoriaNotificacao.IMPORTANTE, destPagamento));
 
         return true;
+    }
+
+    // Síndico simula emissão mensal para todos os condôminos
+    public int gerarBoletosDoMes(String mesReferencia, LocalDate dataVencimento) {
+        double taxa = armazenamento.getTaxaCondominialPadrao();
+        int count = 0;
+        for (Usuario u : armazenamento.getUsuarios()) {
+            if (u instanceof Condomino) {
+                gerarBoleto(((Condomino) u).getUnidade(), mesReferencia, taxa, dataVencimento);
+                count++;
+            }
+        }
+        return count;
     }
 
     public List<Boleto> listarTodos() {
