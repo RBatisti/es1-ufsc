@@ -29,6 +29,16 @@ public class ChamadoController {
         return armazenamento.getChamados();
     }
 
+    public List<Chamado> listarPorStatus(StatusChamado status) {
+        List<Chamado> resultado = new ArrayList<>();
+        for (Chamado c : armazenamento.getChamados()) {
+            if (c.getStatusChamado() == status) {
+                resultado.add(c);
+            }
+        }
+        return resultado;
+    }
+
     public boolean alterarStatus(int indice, StatusChamado novoStatus) {
         List<Chamado> chamados = armazenamento.getChamados();
         if (indice < 0 || indice >= chamados.size()) {

@@ -55,11 +55,42 @@ public class EspacoCompartilhadoController {
         return false;
     }
 
+    // Conta quantas reservas ainda não encerradas (futuras ou em andamento) o condômino possui
+    public int contarReservasFuturas(String cpf) {
+        Date agora = new Date();
+        int count = 0;
+        for (Reserva r : armazenamento.getReservas()) {
+            if (r.getCondomino().getCPF().equals(cpf) && r.getFim().after(agora)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public boolean atingiuLimiteReservasFuturas(String cpf) {
+        return contarReservasFuturas(cpf) >= armazenamento.getLimiteReservasFuturas();
+    }
+
+    public int getLimiteReservasFuturas() {
+        return armazenamento.getLimiteReservasFuturas();
+    }
+
+    public boolean definirLimiteReservasFuturas(int limite) {
+        if (limite < 1) {
+            return false;
+        }
+        armazenamento.setLimiteReservasFuturas(limite);
+        return true;
+    }
+
     public boolean agendarReserva(EspacoCompartilhado espaco, Condomino condomino, Date inicio, Date fim) {
         if (inicio.after(fim) || inicio.equals(fim)) {
             return false;
         }
         if (temConflito(espaco, inicio, fim)) {
+            return false;
+        }
+        if (atingiuLimiteReservasFuturas(condomino.getCPF())) {
             return false;
         }
         armazenamento.adicionarReserva(new Reserva(espaco, inicio, fim, condomino));

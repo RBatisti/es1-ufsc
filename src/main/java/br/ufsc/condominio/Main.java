@@ -75,6 +75,7 @@ public class Main {
                     }
                     if (usuarioLogado instanceof Condomino) {
                         System.out.println("6. Pré-autorizações de Visitantes");
+                        System.out.println("10. Meu Cadastro");
                     }
                     System.out.println("7. Boletos");
                 }
@@ -117,6 +118,13 @@ public class Main {
                         case 8:
                             if (usuarioLogado instanceof Sindico) verHistoricoAcessosSindico();
                             else System.out.println("Opção inválida! Tente novamente.");
+                            break;
+                        case 10:
+                            if (usuarioLogado instanceof Condomino) {
+                                ViewDeUsuarios.editarMeuCadastro(scanner, (Condomino) usuarioLogado);
+                            } else {
+                                System.out.println("Opção inválida! Tente novamente.");
+                            }
                             break;
                         case 9:
                             System.out.println("Logout realizado. Até logo, " + usuarioLogado.getNome() + "!");

@@ -22,6 +22,7 @@ public class ViewDeChamados {
             if (usuarioLogado instanceof Sindico) {
                 System.out.println("1. Ver todos os chamados");
                 System.out.println("2. Alterar status de um chamado");
+                System.out.println("3. Filtrar chamados por status");
             } else {
                 System.out.println("1. Abrir novo chamado");
                 System.out.println("2. Ver meus chamados");
@@ -39,6 +40,9 @@ public class ViewDeChamados {
                         break;
                     case 2:
                         alterarStatusChamado(scanner);
+                        break;
+                    case 3:
+                        filtrarChamadosPorStatus(scanner);
                         break;
                     case 0:
                         break;
@@ -108,6 +112,38 @@ public class ViewDeChamados {
             System.out.println("[" + i + "] [" + c.getStatusChamado() + "]" + novo + " CPF: " + c.getCpfCondomino() + " - " + c.getMensagem());
         }
         chamadoController.marcarTodosComoVistosPeloSindico();
+    }
+
+    private static void filtrarChamadosPorStatus(Scanner scanner) {
+        System.out.println("\nFiltrar por status:");
+        System.out.println("1. NAO_INICIADO");
+        System.out.println("2. EM_ANDAMENTO");
+        System.out.println("3. PRONTO");
+        System.out.print("Escolha: ");
+        int opcaoStatus = scanner.nextInt();
+        scanner.nextLine();
+
+        StatusChamado statusFiltro;
+        switch (opcaoStatus) {
+            case 1: statusFiltro = StatusChamado.NAO_INICIADO; break;
+            case 2: statusFiltro = StatusChamado.EM_ANDAMENTO; break;
+            case 3: statusFiltro = StatusChamado.PRONTO; break;
+            default:
+                System.out.println("Status inválido.");
+                return;
+        }
+
+        List<Chamado> chamados = chamadoController.listarPorStatus(statusFiltro);
+        if (chamados.isEmpty()) {
+            System.out.println("Nenhum chamado com o status " + statusFiltro + ".");
+            return;
+        }
+
+        System.out.println("\n-- Chamados com status " + statusFiltro + " --");
+        for (Chamado c : chamados) {
+            String novo = c.isVisualizadoPeloSindico() ? "" : " [NOVO]";
+            System.out.println("[" + c.getStatusChamado() + "]" + novo + " CPF: " + c.getCpfCondomino() + " - " + c.getMensagem());
+        }
     }
 
     private static void alterarStatusChamado(Scanner scanner) {

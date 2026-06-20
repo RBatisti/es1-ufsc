@@ -36,6 +36,7 @@ public class Armazenamento {
     private List<SolicitacaoAcesso> solicitacoes;
     private List<Boleto> boletos;
     private double taxaCondominialPadrao = 500.00;
+    private int limiteReservasFuturas = 3;
     private Usuario currentUser;
 
     private Armazenamento() {
@@ -218,6 +219,11 @@ public class Armazenamento {
 
     public double getTaxaCondominialPadrao() { return taxaCondominialPadrao; }
     public void setTaxaCondominialPadrao(double taxa) { this.taxaCondominialPadrao = taxa; }
+
+    // --- Limite de reservas futuras por condômino ---
+
+    public int getLimiteReservasFuturas() { return limiteReservasFuturas; }
+    public void setLimiteReservasFuturas(int limite) { this.limiteReservasFuturas = limite; }
 
     // --- Sessão ---
 

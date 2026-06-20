@@ -31,6 +31,7 @@ public class ViewDeEspacosCompartilhados {
                 System.out.println("2. Criar espaço");
                 System.out.println("3. Ver todas as reservas");
                 System.out.println("4. Cancelar uma reserva");
+                System.out.println("5. Definir limite de reservas futuras por condômino");
             } else {
                 System.out.println("2. Fazer reserva");
                 System.out.println("3. Ver minhas reservas");
@@ -48,6 +49,7 @@ public class ViewDeEspacosCompartilhados {
                     case 2: criarEspaco(scanner); break;
                     case 3: verTodasReservas(); break;
                     case 4: cancelarReservaSindico(scanner); break;
+                    case 5: definirLimiteReservas(scanner); break;
                     case 0: break;
                     default: System.out.println("Opção inválida!");
                 }
@@ -99,10 +101,30 @@ public class ViewDeEspacosCompartilhados {
         System.out.println("Espaço '" + nome + "' criado com sucesso!");
     }
 
+    private static void definirLimiteReservas(Scanner scanner) {
+        System.out.println("\n-- Limite de Reservas Futuras por Condômino --");
+        System.out.println("Limite atual: " + espacoController.getLimiteReservasFuturas() + " reserva(s) por condômino.");
+        System.out.print("Novo limite (mínimo 1): ");
+        int novoLimite = scanner.nextInt();
+        scanner.nextLine();
+
+        if (espacoController.definirLimiteReservasFuturas(novoLimite)) {
+            System.out.println("Limite atualizado para " + novoLimite + " reserva(s) futura(s) por condômino.");
+        } else {
+            System.out.println("Limite inválido. O limite deve ser de no mínimo 1.");
+        }
+    }
+
     private static void fazerReserva(Scanner scanner, Condomino condomino) {
         List<EspacoCompartilhado> espacos = espacoController.listarEspacos();
         if (espacos.isEmpty()) {
             System.out.println("Nenhum espaço cadastrado.");
+            return;
+        }
+
+        if (espacoController.atingiuLimiteReservasFuturas(condomino.getCPF())) {
+            System.out.println("Você atingiu o limite de " + espacoController.getLimiteReservasFuturas()
+                    + " reserva(s) futura(s) simultânea(s). Cancele uma reserva existente para agendar outra.");
             return;
         }
 

@@ -117,6 +117,74 @@ public class ViewDeUsuarios {
         System.out.println("Condômino atualizado com sucesso!");
     }
 
+    public static void editarMeuCadastro(Scanner scanner, Condomino condomino) {
+        System.out.println("\n--- MEU CADASTRO ---");
+        exibirDadosCadastro(condomino);
+
+        System.out.println("\nAtualize seus dados. Deixe em branco para manter o valor atual.");
+
+        System.out.print("Nome [" + condomino.getNome() + "]: ");
+        String nome = scanner.nextLine();
+        System.out.print("E-mail [" + condomino.getEmail() + "]: ");
+        String email = scanner.nextLine();
+        System.out.print("Unidade [" + condomino.getUnidade() + "]: ");
+        String unidade = scanner.nextLine();
+
+        String dataAtual = condomino.getDataNascimento() != null
+                ? FORMATO_DATA.format(condomino.getDataNascimento().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate())
+                : "não informada";
+        System.out.print("Data de nascimento (dd/MM/yyyy) [" + dataAtual + "]: ");
+        String dataStr = scanner.nextLine();
+
+        System.out.print("Gênero (M/F) [" + condomino.getGenero() + "]: ");
+        String generoStr = scanner.nextLine();
+
+        System.out.print("Nova senha (deixe em branco para não alterar): ");
+        String senha = scanner.nextLine();
+
+        if (!dataStr.isBlank()) {
+            Date novaData = parsarData(dataStr);
+            if (novaData == null) {
+                System.out.println("Data inválida. Data de nascimento não foi alterada.");
+            } else {
+                condomino.setDataNascimento(novaData);
+            }
+        }
+
+        if (!generoStr.isBlank()) {
+            if (generoStr.equalsIgnoreCase("M")) {
+                condomino.setGenero(Genero.MASCULINO);
+            } else if (generoStr.equalsIgnoreCase("F")) {
+                condomino.setGenero(Genero.FEMININO);
+            } else {
+                System.out.println("Gênero inválido. Gênero não foi alterado.");
+            }
+        }
+
+        if (!nome.isBlank()) condomino.setNome(nome);
+        if (!email.isBlank()) condomino.setEmail(email);
+        if (!unidade.isBlank()) condomino.setUnidade(unidade);
+        if (!senha.isBlank()) condomino.setSenha(senha);
+
+        System.out.println("\nDados atualizados com sucesso!");
+        exibirDadosCadastro(condomino);
+    }
+
+    private static void exibirDadosCadastro(Condomino condomino) {
+        String dataNascimento = condomino.getDataNascimento() != null
+                ? FORMATO_DATA.format(condomino.getDataNascimento().toInstant()
+                .atZone(ZoneId.systemDefault()).toLocalDate())
+                : "não informada";
+        System.out.println("\nDados atuais:");
+        System.out.println("  Nome: " + condomino.getNome());
+        System.out.println("  CPF: " + condomino.getCPF());
+        System.out.println("  E-mail: " + condomino.getEmail());
+        System.out.println("  Unidade: " + condomino.getUnidade());
+        System.out.println("  Data de nascimento: " + dataNascimento);
+        System.out.println("  Gênero: " + condomino.getGenero());
+    }
+
     private static void excluirCondomino(Scanner scanner) {
         System.out.println("\n-- Excluir Condômino --");
         System.out.print("CPF do condômino a excluir: ");
