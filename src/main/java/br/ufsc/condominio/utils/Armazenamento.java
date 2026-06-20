@@ -44,8 +44,17 @@ public class Armazenamento {
 
         usuarios = new ArrayList<>();
         usuarios.add(new Sindico("Zé", "012.345.678-12", "s", nascimento, Genero.MASCULINO, "123"));
-        usuarios.add(new Condomino("Olivia", "111.222.333-44", "c", nascimento, Genero.FEMININO, "205", "123"));
         usuarios.add(new Porteiro("João", "999.888.777-66", "p", nascimento, Genero.MASCULINO, "123"));
+
+        Condomino.Builder condominoBuilder = new Condomino.Builder()
+                .nome("Olivia")
+                .cpf("111.222.333-44")
+                .email("c")
+                .dataNascimento(nascimento)
+                .genero(Genero.FEMININO)
+                .unidade("205")
+                .senha("123");
+        usuarios.add(condominoBuilder.build());
 
         avisos = new ArrayList<>();
         chamados = new ArrayList<>();

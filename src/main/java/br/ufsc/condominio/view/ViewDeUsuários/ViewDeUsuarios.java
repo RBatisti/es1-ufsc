@@ -78,7 +78,17 @@ public class ViewDeUsuarios {
         }
 
         Genero genero = generoStr.equalsIgnoreCase("M") ? Genero.MASCULINO : Genero.FEMININO;
-        usersController.cadastrarUsuario(new Condomino(nome, cpf, email, dataNascimento, genero, unidade, senha));
+
+        Condomino.Builder builder = new Condomino.Builder()
+                .nome(nome)
+                .cpf(cpf)
+                .email(email)
+                .dataNascimento(dataNascimento)
+                .genero(genero)
+                .unidade(unidade)
+                .senha(senha);
+
+        usersController.cadastrarUsuario(builder.build());
         System.out.println("Condômino cadastrado com sucesso!");
     }
 
