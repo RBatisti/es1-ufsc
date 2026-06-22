@@ -43,8 +43,22 @@ public class Armazenamento {
         Date nascimento = Date.from(LocalDate.of(1980, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
 
         usuarios = new ArrayList<>();
-        usuarios.add(new Sindico("Zé", "012.345.678-12", "s", nascimento, Genero.MASCULINO, "123"));
-        usuarios.add(new Porteiro("João", "999.888.777-66", "p", nascimento, Genero.MASCULINO, "123"));
+        usuarios.add(new Sindico.Builder()
+                .nome("Zé")
+                .cpf("012.345.678-12")
+                .email("s")
+                .dataNascimento(nascimento)
+                .genero(Genero.MASCULINO)
+                .senha("123")
+                .build());
+        usuarios.add(new Porteiro.Builder()
+                .nome("João")
+                .cpf("999.888.777-66")
+                .email("p")
+                .dataNascimento(nascimento)
+                .genero(Genero.MASCULINO)
+                .senha("123")
+                .build());
 
         Condomino.Builder condominoBuilder = new Condomino.Builder()
                 .nome("Olivia")
