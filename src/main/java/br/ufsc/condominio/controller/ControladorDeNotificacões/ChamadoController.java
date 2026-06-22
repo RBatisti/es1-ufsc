@@ -2,7 +2,7 @@ package br.ufsc.condominio.controller.ControladorDeNotificacões;
 
 import br.ufsc.condominio.utils.Armazenamento;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
-import br.ufsc.condominio.model.PacoteDeNotificacoes.StatusChamado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.StatusChamado;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,22 +29,23 @@ public class ChamadoController {
         return armazenamento.getChamados();
     }
 
-    public List<Chamado> listarPorStatus(StatusChamado status) {
+    public List<Chamado> listarPorStatus(Class<? extends StatusChamado> status) {
+
         List<Chamado> resultado = new ArrayList<>();
         for (Chamado c : armazenamento.getChamados()) {
-            if (c.getStatusChamado() == status) {
+            if (status.isInstance(c.getStatusChamado())) {
                 resultado.add(c);
             }
         }
         return resultado;
     }
 
-    public boolean alterarStatus(int indice, StatusChamado novoStatus) {
+    public boolean alterarStatus(int indice) {
         List<Chamado> chamados = armazenamento.getChamados();
         if (indice < 0 || indice >= chamados.size()) {
             return false;
         }
-        chamados.get(indice).setStatusChamado(novoStatus);
+        chamados.get(indice).avancarStatus();
         return true;
     }
 

@@ -1,15 +1,17 @@
 package br.ufsc.condominio.model.PacoteDeNotificacoes;
 
 import java.util.Date;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.StatusChamado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.nao_iniciado;
 
 public class Chamado extends Notificacao {
     private StatusChamado statusChamado;
     private String cpfCondomino;
     private boolean visualizadoPeloSindico;
 
-    public Chamado(String mensagem, Date data, CategoriaNotificacao categoria, StatusChamado statusChamado, String cpfCondomino) {
+    public Chamado(String mensagem, Date data, CategoriaNotificacao categoria, String cpfCondomino) {
         super(mensagem, data, categoria);
-        this.statusChamado = statusChamado;
+        this.statusChamado = new nao_iniciado();
         this.cpfCondomino = cpfCondomino;
         this.visualizadoPeloSindico = false;
     }
@@ -20,6 +22,10 @@ public class Chamado extends Notificacao {
 
     public void setStatusChamado(StatusChamado statusChamado) {
         this.statusChamado = statusChamado;
+    }
+
+    public void avancarStatus() {
+        this.statusChamado.avancar(this);
     }
 
     public String getCpfCondomino() {

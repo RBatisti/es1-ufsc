@@ -3,8 +3,11 @@ package br.ufsc.condominio.view.ViewDeChamados;
 import br.ufsc.condominio.controller.ControladorDeNotificacões.ChamadoController;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.CategoriaNotificacao;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.StatusChamado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.em_andamento;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.nao_iniciado;
+import br.ufsc.condominio.model.PacoteDeNotificacoes.State.pronto;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
-import br.ufsc.condominio.model.PacoteDeNotificacoes.StatusChamado;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 
 import java.util.Date;
@@ -79,7 +82,7 @@ public class ViewDeChamados {
             categoria = CategoriaNotificacao.NAO_IMPORTANTE;
         }
 
-        chamadoController.abrirChamado(new Chamado(descricao, new Date(), categoria, StatusChamado.NAO_INICIADO, usuarioLogado.getCPF()));
+        chamadoController.abrirChamado(new Chamado(descricao, new Date(), categoria, usuarioLogado.getCPF()));
         System.out.println("Chamado registrado! O síndico será notificado.");
     }
 
@@ -125,15 +128,15 @@ public class ViewDeChamados {
 
         StatusChamado statusFiltro;
         switch (opcaoStatus) {
-            case 1: statusFiltro = StatusChamado.NAO_INICIADO; break;
-            case 2: statusFiltro = StatusChamado.EM_ANDAMENTO; break;
-            case 3: statusFiltro = StatusChamado.PRONTO; break;
+            case 1: statusFiltro = new nao_iniciado(); break;
+            case 2: statusFiltro = new em_andamento(); break;
+            case 3: statusFiltro = new pronto(); break;
             default:
                 System.out.println("Status inválido.");
                 return;
         }
 
-        List<Chamado> chamados = chamadoController.listarPorStatus(statusFiltro);
+        List<Chamado> chamados = chamadoController.listarPorStatus(statusFiltro.getClass());
         if (chamados.isEmpty()) {
             System.out.println("Nenhum chamado com o status " + statusFiltro + ".");
             return;
@@ -163,29 +166,26 @@ public class ViewDeChamados {
         int indice = scanner.nextInt();
         scanner.nextLine();
 
-        System.out.println("Novo status:");
-        System.out.println("1. NAO_INICIADO");
-        System.out.println("2. EM_ANDAMENTO");
-        System.out.println("3. PRONTO");
-        System.out.print("Escolha: ");
-        int opcaoStatus = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("Avançar status do chamado? (S/N): ");
+        String opcaoStatus = scanner.nextLine().trim().toUpperCase();
 
-        StatusChamado novoStatus;
-        switch (opcaoStatus) {
-            case 1: novoStatus = StatusChamado.NAO_INICIADO; break;
-            case 2: novoStatus = StatusChamado.EM_ANDAMENTO; break;
-            case 3: novoStatus = StatusChamado.PRONTO; break;
-            default:
-                System.out.println("Status inválido.");
-                return;
-        }
+        // Verifica se o usuário de fato escolheu "S"
+        if (opcaoStatus.equals("S")) {
 
-        boolean sucesso = chamadoController.alterarStatus(indice, novoStatus);
-        if (sucesso) {
-            System.out.println("Status atualizado para " + novoStatus + ".");
+            try {
+                boolean sucesso = chamadoController.alterarStatus(indice);
+                if (sucesso) {
+                    System.out.println("Status atualizado!");
+                } else {
+                    System.out.println("Número de chamado inválido");
+                }
+            } catch (IllegalStateException e) {
+                System.out.println(e);
+            }
+        } else if (opcaoStatus.equals("N")) {
+            System.out.println("Operação cancelada.");
         } else {
-            System.out.println("Número de chamado inválido.");
+            System.out.println("Opção inválida.");
         }
-    }
+}
 }
