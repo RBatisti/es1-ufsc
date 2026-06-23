@@ -124,6 +124,7 @@ public class ViewDeUsuarios {
         if (!senha.isBlank()) condomino.setSenha(senha);
         if (!unidade.isBlank()) condomino.setUnidade(unidade);
 
+        usersController.atualizarUsuario(condomino);
         System.out.println("Condômino atualizado com sucesso!");
     }
 
@@ -177,6 +178,7 @@ public class ViewDeUsuarios {
         if (!unidade.isBlank()) condomino.setUnidade(unidade);
         if (!senha.isBlank()) condomino.setSenha(senha);
 
+        usersController.atualizarUsuario(condomino);
         System.out.println("\nDados atualizados com sucesso!");
         exibirDadosCadastro(condomino);
     }

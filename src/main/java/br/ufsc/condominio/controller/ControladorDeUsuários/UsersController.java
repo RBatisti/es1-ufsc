@@ -22,6 +22,10 @@ public class UsersController {
         armazenamento.adicionarUsuario(usuario);
     }
 
+    public void atualizarUsuario(Usuario usuario) {
+        armazenamento.atualizarUsuario(usuario);
+    }
+
     public boolean removerUsuario(String cpf) {
         return armazenamento.removerUsuario(cpf);
     }

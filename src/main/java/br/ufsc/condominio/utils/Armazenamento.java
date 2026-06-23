@@ -9,17 +9,13 @@ import br.ufsc.condominio.model.PacoteDeEspaçosCompartilhados.Reserva;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Aviso;
 import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
-import br.ufsc.condominio.model.PacoteDeUsuarios.Genero;
-import br.ufsc.condominio.model.PacoteDeUsuarios.Porteiro;
-import br.ufsc.condominio.model.PacoteDeUsuarios.Sindico;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
+import br.ufsc.condominio.persistencia.UsuarioDAO;
 
-import java.time.LocalDate;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Armazenamento {
@@ -40,35 +36,12 @@ public class Armazenamento {
     private Usuario currentUser;
 
     private Armazenamento() {
-        Date nascimento = Date.from(LocalDate.of(1980, 1, 1).atStartOfDay(ZoneId.systemDefault()).toInstant());
-
-        usuarios = new ArrayList<>();
-        usuarios.add(new Sindico.Builder()
-                .nome("Zé")
-                .cpf("012.345.678-12")
-                .email("s")
-                .dataNascimento(nascimento)
-                .genero(Genero.MASCULINO)
-                .senha("123")
-                .build());
-        usuarios.add(new Porteiro.Builder()
-                .nome("João")
-                .cpf("999.888.777-66")
-                .email("p")
-                .dataNascimento(nascimento)
-                .genero(Genero.MASCULINO)
-                .senha("123")
-                .build());
-
-        Condomino.Builder condominoBuilder = new Condomino.Builder()
-                .nome("Olivia")
-                .cpf("111.222.333-44")
-                .email("c")
-                .dataNascimento(nascimento)
-                .genero(Genero.FEMININO)
-                .unidade("205")
-                .senha("123");
-        usuarios.add(condominoBuilder.build());
+        try {
+            usuarios = new UsuarioDAO().listarTodos();
+        } catch (SQLException e) {
+            System.err.println("Aviso: não foi possível carregar usuários do banco de dados. " + e.getMessage());
+            usuarios = new ArrayList<>();
+        }
 
         avisos = new ArrayList<>();
         chamados = new ArrayList<>();
@@ -95,12 +68,30 @@ public class Armazenamento {
     }
 
     public void adicionarUsuario(Usuario usuario) {
+        try {
+            new UsuarioDAO().salvar(usuario);
+        } catch (SQLException e) {
+            System.err.println("Erro ao salvar usuário no banco de dados: " + e.getMessage());
+        }
         usuarios.add(usuario);
+    }
+
+    public void atualizarUsuario(Usuario usuario) {
+        try {
+            new UsuarioDAO().atualizar(usuario);
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar usuário no banco de dados: " + e.getMessage());
+        }
     }
 
     public boolean removerUsuario(String cpf) {
         for (Usuario u : usuarios) {
             if (u.getCPF().equals(cpf)) {
+                try {
+                    new UsuarioDAO().remover(cpf);
+                } catch (SQLException e) {
+                    System.err.println("Erro ao remover usuário do banco de dados: " + e.getMessage());
+                }
                 usuarios.remove(u);
                 return true;
             }

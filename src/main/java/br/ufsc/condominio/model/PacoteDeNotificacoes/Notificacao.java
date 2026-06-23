@@ -3,6 +3,7 @@ package br.ufsc.condominio.model.PacoteDeNotificacoes;
 import java.util.Date;
 
 public class Notificacao {
+    private int id;
     private String mensagem;
     private Date data;
     private CategoriaNotificacao categoria;
@@ -11,6 +12,14 @@ public class Notificacao {
         this.mensagem = mensagem;
         this.data = data;
         this.categoria = categoria;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getMensagem() {
