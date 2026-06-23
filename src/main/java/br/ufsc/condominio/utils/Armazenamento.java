@@ -85,6 +85,8 @@ public class Armazenamento {
     public void adicionarUsuario(Usuario usuario) {
         try {
             new UsuarioDAO().salvar(usuario);
+            // Novo usuário passa a enxergar todos os avisos existentes como não lidos.
+            notificacaoDAO.registrarUsuarioEmAvisos(usuario.getCPF());
         } catch (SQLException e) {
             System.err.println("Erro ao salvar usuário no banco de dados: " + e.getMessage());
         }

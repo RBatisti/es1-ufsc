@@ -101,19 +101,23 @@ public class NotificacaoDAO implements Dao<Notificacao> {
             }
             aviso.setId(idAviso);
 
-            if (!aviso.getDestinatarios().isEmpty()) {
-                try (PreparedStatement stmt = conn.prepareStatement("""
-                        INSERT INTO aviso_destinatario (id_aviso, cpf_destinatario, visualizado)
-                        VALUES (?, ?, ?)
-                        """)) {
-                    for (String cpf : aviso.getDestinatarios()) {
-                        stmt.setInt(1, idAviso);
-                        stmt.setString(2, cpf);
-                        stmt.setBoolean(3, aviso.foiVistoPor(cpf));
-                        stmt.addBatch();
-                    }
-                    stmt.executeBatch();
+            // Destinatários explícitos; se for broadcast (lista vazia), materializa
+            // uma linha por usuário cadastrado para que a leitura possa ser persistida.
+            List<String> destinatarios = aviso.getDestinatarios().isEmpty()
+                    ? listarCpfsUsuarios(conn)
+                    : aviso.getDestinatarios();
+
+            try (PreparedStatement stmt = conn.prepareStatement("""
+                    INSERT INTO aviso_destinatario (id_aviso, cpf_destinatario, visualizado)
+                    VALUES (?, ?, ?)
+                    """)) {
+                for (String cpf : destinatarios) {
+                    stmt.setInt(1, idAviso);
+                    stmt.setString(2, cpf);
+                    stmt.setBoolean(3, aviso.foiVistoPor(cpf));
+                    stmt.addBatch();
                 }
+                stmt.executeBatch();
             }
 
             conn.commit();
@@ -122,6 +126,37 @@ public class NotificacaoDAO implements Dao<Notificacao> {
             throw e;
         } finally {
             fechar(conn);
+        }
+    }
+
+    private List<String> listarCpfsUsuarios(Connection conn) throws SQLException {
+        List<String> cpfs = new ArrayList<>();
+        try (PreparedStatement stmt = conn.prepareStatement("SELECT cpf FROM usuario");
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) cpfs.add(rs.getString(1));
+        }
+        return cpfs;
+    }
+
+    /**
+     * Registra um usuário recém-criado em todos os avisos existentes como NÃO lido,
+     * para que ele passe a enxergá-los (inclusive os broadcast anteriores ao cadastro).
+     */
+    public void registrarUsuarioEmAvisos(String cpf) throws SQLException {
+        String sql = """
+                INSERT INTO aviso_destinatario (id_aviso, cpf_destinatario, visualizado)
+                SELECT a.id_aviso, ?, FALSE
+                FROM aviso a
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM aviso_destinatario ad
+                    WHERE ad.id_aviso = a.id_aviso AND ad.cpf_destinatario = ?
+                )
+                """;
+        try (Connection conn = conexao.abrirConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, cpf);
+            stmt.setString(2, cpf);
+            stmt.executeUpdate();
         }
     }
 
