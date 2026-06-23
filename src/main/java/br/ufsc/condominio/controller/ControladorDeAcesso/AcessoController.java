@@ -26,7 +26,7 @@ public class AcessoController {
             String cpf_aut = a.getCpf();
             LocalDateTime hora_inicio = a.getHoraInicio();
             LocalDateTime hora_fim = a.getHoraFim();
-            boolean valid = armazenamento.betweenDates(hora_inicio, hora_fim);
+            boolean valid = Armazenamento.betweenDates(hora_inicio, hora_fim);
             if (cpf.equals(cpf_aut) && valid) {
                 boolean t = registrarAcesso(a);
                 if (t) {
