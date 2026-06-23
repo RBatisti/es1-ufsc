@@ -80,7 +80,7 @@ public class ViewDeAvisos {
         for (Aviso a : avisos) {
             String lido = a.foiVistoPor(usuarioLogado.getCPF()) ? "[LIDO]    " : "[NAO LIDO]";
             System.out.println(lido + " [" + a.getCategoria() + "] " + a.getMensagem());
-            a.marcarComoVisto(usuarioLogado.getCPF());
+            avisoController.marcarComoVisto(a, usuarioLogado.getCPF());
         }
     }
 }

@@ -11,6 +11,7 @@ import br.ufsc.condominio.model.PacoteDeNotificacoes.Chamado;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Condomino;
 import br.ufsc.condominio.model.PacoteDeUsuarios.Usuario;
 import br.ufsc.condominio.model.PrestacaoContas.TransacaoFinanceira;
+import br.ufsc.condominio.persistencia.NotificacaoDAO;
 import br.ufsc.condominio.persistencia.UsuarioDAO;
 
 import java.sql.SQLException;
@@ -35,6 +36,8 @@ public class Armazenamento {
     private int limiteReservasFuturas = 3;
     private Usuario currentUser;
 
+    private final NotificacaoDAO notificacaoDAO = new NotificacaoDAO();
+
     private Armazenamento() {
         try {
             usuarios = new UsuarioDAO().listarTodos();
@@ -43,8 +46,20 @@ public class Armazenamento {
             usuarios = new ArrayList<>();
         }
 
-        avisos = new ArrayList<>();
-        chamados = new ArrayList<>();
+        try {
+            avisos = notificacaoDAO.listarAvisos();
+        } catch (SQLException e) {
+            System.err.println("Aviso: não foi possível carregar avisos do banco de dados. " + e.getMessage());
+            avisos = new ArrayList<>();
+        }
+
+        try {
+            chamados = notificacaoDAO.listarChamados();
+        } catch (SQLException e) {
+            System.err.println("Aviso: não foi possível carregar chamados do banco de dados. " + e.getMessage());
+            chamados = new ArrayList<>();
+        }
+
         espacos = new ArrayList<>();
         reservas = new ArrayList<>();
         transacoes = new ArrayList<>();
@@ -121,7 +136,21 @@ public class Armazenamento {
     }
 
     public void adicionarAviso(Aviso aviso) {
+        try {
+            notificacaoDAO.salvar(aviso);
+        } catch (SQLException e) {
+            System.err.println("Erro ao salvar aviso no banco de dados: " + e.getMessage());
+        }
         avisos.add(aviso);
+    }
+
+    public void marcarAvisoVisualizado(Aviso aviso, String cpf) {
+        aviso.marcarComoVisto(cpf);
+        try {
+            notificacaoDAO.marcarAvisoVisualizado(aviso.getId(), cpf);
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar visualização do aviso: " + e.getMessage());
+        }
     }
 
     // --- Chamados ---
@@ -131,7 +160,20 @@ public class Armazenamento {
     }
 
     public void adicionarChamado(Chamado chamado) {
+        try {
+            notificacaoDAO.salvar(chamado);
+        } catch (SQLException e) {
+            System.err.println("Erro ao salvar chamado no banco de dados: " + e.getMessage());
+        }
         chamados.add(chamado);
+    }
+
+    public void atualizarChamado(Chamado chamado) {
+        try {
+            notificacaoDAO.atualizarChamado(chamado);
+        } catch (SQLException e) {
+            System.err.println("Erro ao atualizar chamado no banco de dados: " + e.getMessage());
+        }
     }
 
     // --- Espacos ---

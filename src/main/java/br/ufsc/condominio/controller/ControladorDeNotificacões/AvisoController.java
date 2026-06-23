@@ -18,6 +18,10 @@ public class AvisoController {
         armazenamento.adicionarAviso(aviso);
     }
 
+    public void marcarComoVisto(Aviso aviso, String cpf) {
+        armazenamento.marcarAvisoVisualizado(aviso, cpf);
+    }
+
     public List<Aviso> listar(String cpf) {
         List<Aviso> resultado = new ArrayList<>();
         for (Aviso a : armazenamento.getAvisos()) {

@@ -36,4 +36,12 @@ public class Aviso extends Notificacao {
             cpfsQueViram.add(cpf);
         }
     }
+
+    public List<String> getDestinatarios() {
+        return destinatarios;
+    }
+
+    public List<String> getCpfsQueViram() {
+        return cpfsQueViram;
+    }
 }

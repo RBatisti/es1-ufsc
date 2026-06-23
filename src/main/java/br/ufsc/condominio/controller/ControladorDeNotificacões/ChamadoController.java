@@ -45,13 +45,18 @@ public class ChamadoController {
         if (indice < 0 || indice >= chamados.size()) {
             return false;
         }
-        chamados.get(indice).avancarStatus();
+        Chamado chamado = chamados.get(indice);
+        chamado.avancarStatus();
+        armazenamento.atualizarChamado(chamado);
         return true;
     }
 
     public void marcarTodosComoVistosPeloSindico() {
         for (Chamado c : armazenamento.getChamados()) {
-            c.setVisualizadoPeloSindico(true);
+            if (!c.isVisualizadoPeloSindico()) {
+                c.setVisualizadoPeloSindico(true);
+                armazenamento.atualizarChamado(c);
+            }
         }
     }
 
