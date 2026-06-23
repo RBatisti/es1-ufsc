@@ -6,8 +6,8 @@ CREATE TABLE tipo_usuario (
     descricao VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO tipo_usuario (descricao) VALUES 
-('Sindico'), ('Condômino');
+INSERT INTO tipo_usuario (descricao) VALUES
+('Sindico'), ('Condômino'), ('Porteiro');
 
 -- Tabela de referência para o gênero
 CREATE TABLE genero (
@@ -15,8 +15,8 @@ CREATE TABLE genero (
     descricao VARCHAR(50) NOT NULL UNIQUE
 );
 
-INSERT INTO genero (descricao) VALUES 
-('Feminino'), ('Masculino'), ('Outro'), ('Prefiro não dizer');
+INSERT INTO genero (descricao) VALUES
+('Masculino'), ('Feminino');
 
 -- Tabela de referência para status
 CREATE TABLE status (
@@ -71,9 +71,17 @@ CREATE TABLE aviso_destinatario (
 
 CREATE TABLE chamado (
     id_chamado SERIAL PRIMARY KEY,
+    id_notificacao INT NOT NULL,
     id_status INT,
     cpf_condomino VARCHAR(14),
     visualizado_sindico BOOLEAN DEFAULT FALSE,
+    CONSTRAINT fk_chamado_notificacao FOREIGN KEY (id_notificacao) REFERENCES notificacao (id_notificacao),
     CONSTRAINT fk_chamado_status FOREIGN KEY (id_status) REFERENCES status (id_status),
     CONSTRAINT fk_chamado_usuario FOREIGN KEY (cpf_condomino) REFERENCES usuario (cpf)
 );
+
+-- Usuários padrão do sistema
+INSERT INTO usuario (cpf, nome, data_nascimento, id_genero, senha, email, id_tipo_usuario, unidade, data_cadastro) VALUES
+('012.345.678-12', 'Zé',     '1980-01-01', 1, '123', 's', 1, NULL, NULL),
+('999.888.777-66', 'João',   '1980-01-01', 1, '123', 'p', 3, NULL, NULL),
+('111.222.333-44', 'Olivia', '1980-01-01', 2, '123', 'c', 2, 205,  CURRENT_DATE);
